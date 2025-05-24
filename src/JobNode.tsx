@@ -29,25 +29,36 @@ export function JobNode({
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                <Accordion type="multiple" className="ml-2">
-                  {job.steps.map((step, index) => (
-                    <AccordionItem key={index} value={`step-${index}`}>
-                      <AccordionTrigger className="justify-start">
-                        {step.name || step.run || step.uses}
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="text-xs">
-                            {step.run ? "run" : "uses"}
-                          </Badge>
-                          <code className="text-sm">
-                            {step.run || step.uses}
-                          </code>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
+                {job.steps.length > 0 && (
+                  <Accordion type="multiple" className="ml-2">
+                    {job.steps.map((step, index) => (
+                      <AccordionItem key={index} value={`step-${index}`}>
+                        <AccordionTrigger className="justify-start">
+                          {step.name || step.run || step.uses}
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary" className="text-xs">
+                              {step.run ? "run" : "uses"}
+                            </Badge>
+                            <code className="text-sm">
+                              {step.run || step.uses}
+                            </code>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                )}
+
+                {job.uses && (
+                  <div className="ml-2 mt-2">
+                    <Badge variant="secondary" className="text-xs">
+                      uses
+                    </Badge>
+                    <code className="text-sm"> {job.uses}</code>
+                  </div>
+                )}
               </AccordionContent>
             </AccordionItem>
           </Accordion>

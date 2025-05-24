@@ -21,7 +21,8 @@ export const jobSchema = z.object({
   name: z.string().optional(),
   "runs-on": z.string().optional(),
   needs: z.union([z.string(), z.array(z.string())]).optional(),
-  steps: z.array(stepSchema),
+  steps: z.array(stepSchema).optional().default([]),
+  uses: z.string().optional(),
 });
 
 // Jobs: map of job names to job definitions
@@ -44,7 +45,9 @@ export type Job = z.infer<typeof jobSchema>;
 export type GithubWorkflow = z.infer<typeof githubWorkflowSchema>;
 
 export default function App() {
-  const [code, setCode] = useState<string | undefined>();
+  const [code, setCode] = useState<string | undefined>(
+    localStorage.getItem("workflowCode") || ""
+  );
   const [error, setError] = useState<string | null>(null);
   const [workflow, setWorkflow] = useState<GithubWorkflow | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -72,6 +75,8 @@ export default function App() {
           setError((e as Error).message);
           setWorkflow(null);
         }
+
+        localStorage.setItem("workflowCode", code);
       }
 
       clearTimeout(timeoutRef.current!);
