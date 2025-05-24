@@ -23,7 +23,10 @@ export function JobNode({
           <Accordion type="single" collapsible defaultValue="steps">
             <AccordionItem value="steps">
               <AccordionTrigger className="justify-start">
-                {job.name || name}
+                <div className="flex items-center gap-3">
+                  {job.name || name}{" "}
+                  {job["runs-on"] && <Badge>{job["runs-on"]}</Badge>}
+                </div>
               </AccordionTrigger>
               <AccordionContent>
                 <Accordion type="multiple" className="ml-2">

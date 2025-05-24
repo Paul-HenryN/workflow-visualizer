@@ -1,4 +1,6 @@
 import {
+  applyEdgeChanges,
+  applyNodeChanges,
   Background,
   Controls,
   Position,
@@ -7,11 +9,14 @@ import {
   useNodesState,
   useReactFlow,
   type Edge,
+  type EdgeChange,
   type Node,
+  type NodeChange,
+  type OnNodesChange,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import type { GithubWorkflow } from "./App";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import Dagre from "@dagrejs/dagre";
 import { JobNode } from "./JobNode";
 
@@ -94,6 +99,17 @@ export default function Graph({ workflow }: { workflow: GithubWorkflow }) {
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges] = useEdgesState(initialEdges);
 
+  const handleNodesChange: OnNodesChange = useCallback(
+    (changes: NodeChange[]) =>
+      setNodes((nds) => applyNodeChanges(changes, nds)),
+    []
+  );
+  const handleEdgesChange = useCallback(
+    (changes: EdgeChange[]) =>
+      setEdges((eds) => applyEdgeChanges(changes, eds)),
+    []
+  );
+
   const { fitView } = useReactFlow();
 
   useEffect(() => {
@@ -109,7 +125,14 @@ export default function Graph({ workflow }: { workflow: GithubWorkflow }) {
   }, [workflow, fitView, initialNodes, initialEdges, setEdges, setNodes]);
 
   return (
-    <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} fitView>
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      nodeTypes={nodeTypes}
+      onNodesChange={handleNodesChange}
+      onEdgesChange={handleEdgesChange}
+      fitView
+    >
       <Controls />
     </ReactFlow>
   );
