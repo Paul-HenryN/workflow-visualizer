@@ -2,6 +2,8 @@ import Editor from "@monaco-editor/react";
 import { useEffect, useRef, useState } from "react";
 import yml from "yaml";
 import { z } from "zod";
+import Graph from "./Graph";
+import { Background, ReactFlowProvider } from "@xyflow/react";
 
 // Step can be either a "run" or a "uses" step, both with optional name
 const stepSchema = z
@@ -15,8 +17,9 @@ const stepSchema = z
   });
 
 // Job schema with optional `needs`
-const jobSchema = z.object({
-  "runs-on": z.string(),
+export const jobSchema = z.object({
+  name: z.string().optional(),
+  "runs-on": z.string().optional(),
   needs: z.union([z.string(), z.array(z.string())]).optional(),
   steps: z.array(stepSchema),
 });
@@ -37,14 +40,16 @@ export const githubWorkflowSchema = z.object({
   jobs: jobsSchema,
 });
 
-type GithubWorkflow = z.infer<typeof githubWorkflowSchema>;
+export type Job = z.infer<typeof jobSchema>;
+export type GithubWorkflow = z.infer<typeof githubWorkflowSchema>;
 
 export default function App() {
   const [code, setCode] = useState<string | undefined>();
+  const [error, setError] = useState<string | null>(null);
   const [workflow, setWorkflow] = useState<GithubWorkflow | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Runs with 2s debounce on code change
+  // Runs with debounce on code change
   // This is to prevent the parsing from running on every keystroke
   useEffect(() => {
     if (timeoutRef.current) {
@@ -55,15 +60,16 @@ export default function App() {
     timeoutRef.current = setTimeout(() => {
       if (!code) {
         setWorkflow(null);
+        setError(null);
       } else {
         // Parse the YAML code
         try {
           const parsedYaml = yml.parse(code);
           const workflowData = githubWorkflowSchema.parse(parsedYaml);
-
           setWorkflow(workflowData);
+          setError(null);
         } catch (e) {
-          alert("Invalid YAML or schema: " + e);
+          setError((e as Error).message);
           setWorkflow(null);
         }
       }
@@ -81,7 +87,7 @@ export default function App() {
   }, [code]);
 
   return (
-    <main className="flex">
+    <main className="flex min-screen h-screen">
       <Editor
         height="100vh"
         width="30%"
@@ -91,8 +97,18 @@ export default function App() {
         theme="vs-dark"
       />
 
-      <section className="p-4">
-        <pre>{JSON.stringify(workflow, null, 2)}</pre>
+      <section className="p-4 h-full w-full">
+        <ReactFlowProvider>
+          {workflow && <Graph workflow={workflow} />}
+          <Background />
+        </ReactFlowProvider>
+
+        {error && (
+          <div className="text-red-500">
+            <h2 className="text-lg font-bold">Error:</h2>
+            <p>{error}</p>
+          </div>
+        )}
       </section>
     </main>
   );

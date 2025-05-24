@@ -13,6 +13,7 @@ import "@xyflow/react/dist/style.css";
 import type { GithubWorkflow } from "./App";
 import { useEffect, useMemo } from "react";
 import Dagre from "@dagrejs/dagre";
+import { JobNode } from "./JobNode";
 
 function getLayoutedElements(
   nodes: Node[],
@@ -52,16 +53,21 @@ function getLayoutedElements(
   };
 }
 
+const nodeTypes = {
+  job: JobNode,
+};
+
 export default function Graph({ workflow }: { workflow: GithubWorkflow }) {
   const initialNodes = useMemo<Node[]>(
     () =>
-      Object.entries(workflow.jobs).map(([jobName]) => ({
+      Object.entries(workflow.jobs).map(([jobName, job]) => ({
         id: jobName,
-        data: { label: jobName },
+        data: { name: jobName, job },
         position: { x: 0, y: 0 },
-        measured: { width: 200, height: 50 },
+        measured: { width: 300, height: 200 * (job.steps.length || 1) },
         sourcePosition: Position.Right,
         targetPosition: Position.Left,
+        type: "job",
       })),
     [workflow]
   );
@@ -103,9 +109,8 @@ export default function Graph({ workflow }: { workflow: GithubWorkflow }) {
   }, [workflow, fitView, initialNodes, initialEdges, setEdges, setNodes]);
 
   return (
-    <ReactFlow nodes={nodes} edges={edges} fitView>
+    <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} fitView>
       <Controls />
-      <Background />
     </ReactFlow>
   );
 }
