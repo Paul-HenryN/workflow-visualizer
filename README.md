@@ -1,54 +1,65 @@
-# React + TypeScript + Vite
+# GitHub Workflow Visualizer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small tool that lets you **visualize GitHub Actions workflows** as interactive graphs.
 
-Currently, two official plugins are available:
+Built to explore [React Flow](https://reactflow.dev) and [Monaco Editor](https://github.com/microsoft/monaco-editor).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+[https://workflow-visualizer.paulhenry.dev/](https://workflow-visualizer.paulhenry.dev/)
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Live YAML parsing** to detect jobs and dependencies
+- **Interactive graph UI** using React Flow
+- **Built-in code editor** with Monaco Editor
+- **Schema validation** using [Zod](https://zod.dev)
+- Smooth updates with debounced state and error handling
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Tech Stack
+
+- **React** + **Vite**
+- **React Flow** (node/edge rendering)
+- **Monaco Editor** (code editing)
+- **Zod** (schema validation)
+- **js-yaml** (YAML parsing)
+
+## Example input
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm install
+      - run: npm run build
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: npm test
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Potential Improvements
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Friendlier and more detailed error messages
+- Visual editor for configuring workflows without writing YAML
+- Export/share workflows as images or links
+- Auto layout and performance tweaks
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+## Getting Started
+
+```bash
+git clone https://github.com/your-username/github-workflow-visualizer.git
+cd github-workflow-visualizer
+pnpm install
+pnpm run dev
 ```
+
+Then open `http://localhost:5173` in your browser.
