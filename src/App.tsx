@@ -11,6 +11,59 @@ import {
 } from "./components/ui/resizable";
 import { Toaster } from "sonner";
 
+const exampleCode = `name: Node.js CI with Build and Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build project
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: |
+            dist
+            build
+            out
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+
+      - name: Simulate deployment
+        run: echo "🚀 Deploying the contents of ./dist or ./build..."`;
+
 // Step can be either a "run" or a "uses" step, both with optional name
 const stepSchema = z
   .object({
@@ -52,7 +105,7 @@ export type GithubWorkflow = z.infer<typeof githubWorkflowSchema>;
 
 export default function App() {
   const [code, setCode] = useState<string | undefined>(
-    localStorage.getItem("workflowCode") || ""
+    localStorage.getItem("workflowCode") || exampleCode
   );
   const [error, setError] = useState<string | null>(null);
   const [workflow, setWorkflow] = useState<GithubWorkflow | null>(null);
