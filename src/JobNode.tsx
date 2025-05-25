@@ -24,7 +24,7 @@ export function JobNode({
         <CardContent>
           <Accordion type="single" collapsible defaultValue="steps">
             <AccordionItem value="steps">
-              <AccordionTrigger className="justify-start">
+              <AccordionTrigger className="justify-start font-bold">
                 <div className="flex items-center gap-3">
                   {job.name || name}{" "}
                   {job["runs-on"] && (
@@ -44,10 +44,7 @@ export function JobNode({
                           <div className="flex items-center gap-2">
                             <Badge
                               variant="secondary"
-                              className={cn(
-                                "text-xs text-white",
-                                step.run ? "bg-red-500" : "bg-green-600"
-                              )}
+                              className={cn("text-xs")}
                             >
                               {step.run ? "run" : "uses"}
                             </Badge>
@@ -62,10 +59,7 @@ export function JobNode({
 
                 {job.uses && (
                   <div className="ml-2 mt-2 flex items-center gap-2">
-                    <Badge
-                      variant="secondary"
-                      className="text-xs bg-green-600 text-white"
-                    >
+                    <Badge variant="secondary" className="text-xs">
                       uses
                     </Badge>
                     <CodeBlock code={job.uses} />
