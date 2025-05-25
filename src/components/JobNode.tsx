@@ -1,15 +1,15 @@
 import { Handle, Position } from "@xyflow/react";
-import type { Job } from "./App";
-import { Card, CardContent } from "./components/ui/card";
+import type { Job } from "../App";
+import { Card, CardContent } from "./ui/card";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "./components/ui/accordion";
-import { Badge } from "./components/ui/badge";
-import { CodeBlock } from "./components/CodeBlock";
-import { cn } from "./lib/utils";
+} from "./ui/accordion";
+import { Badge } from "./ui/badge";
+import { CodeBlock } from "./CodeBlock";
+import { cn } from "../lib/utils";
 
 export function JobNode({
   data: { name, job },

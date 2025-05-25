@@ -15,7 +15,7 @@ import {
   type OnNodesChange,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import type { GithubWorkflow } from "./App";
+import type { GithubWorkflow } from "../App";
 import { useCallback, useEffect, useMemo } from "react";
 import Dagre from "@dagrejs/dagre";
 import { JobNode } from "./JobNode";

@@ -2,7 +2,7 @@ import Editor from "@monaco-editor/react";
 import { useEffect, useRef, useState } from "react";
 import yml from "yaml";
 import { z } from "zod";
-import Graph from "./Graph";
+import Graph from "./components/Graph";
 import { Background, ReactFlowProvider } from "@xyflow/react";
 import {
   ResizableHandle,
