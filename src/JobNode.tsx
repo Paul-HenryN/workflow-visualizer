@@ -8,6 +8,8 @@ import {
   AccordionTrigger,
 } from "./components/ui/accordion";
 import { Badge } from "./components/ui/badge";
+import { CodeBlock } from "./components/CodeBlock";
+import { cn } from "./lib/utils";
 
 export function JobNode({
   data: { name, job },
@@ -25,7 +27,9 @@ export function JobNode({
               <AccordionTrigger className="justify-start">
                 <div className="flex items-center gap-3">
                   {job.name || name}{" "}
-                  {job["runs-on"] && <Badge>{job["runs-on"]}</Badge>}
+                  {job["runs-on"] && (
+                    <Badge className="bg-blue-400">{job["runs-on"]}</Badge>
+                  )}
                 </div>
               </AccordionTrigger>
               <AccordionContent>
@@ -38,12 +42,17 @@ export function JobNode({
                         </AccordionTrigger>
                         <AccordionContent>
                           <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className="text-xs">
+                            <Badge
+                              variant="secondary"
+                              className={cn(
+                                "text-xs text-white",
+                                step.run ? "bg-red-500" : "bg-green-600"
+                              )}
+                            >
                               {step.run ? "run" : "uses"}
                             </Badge>
-                            <code className="text-sm">
-                              {step.run || step.uses}
-                            </code>
+
+                            <CodeBlock code={step.run || step.uses || ""} />
                           </div>
                         </AccordionContent>
                       </AccordionItem>
@@ -52,11 +61,14 @@ export function JobNode({
                 )}
 
                 {job.uses && (
-                  <div className="ml-2 mt-2">
-                    <Badge variant="secondary" className="text-xs">
+                  <div className="ml-2 mt-2 flex items-center gap-2">
+                    <Badge
+                      variant="secondary"
+                      className="text-xs bg-green-600 text-white"
+                    >
                       uses
                     </Badge>
-                    <code className="text-sm"> {job.uses}</code>
+                    <CodeBlock code={job.uses} />
                   </div>
                 )}
               </AccordionContent>

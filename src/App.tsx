@@ -4,6 +4,12 @@ import yml from "yaml";
 import { z } from "zod";
 import Graph from "./Graph";
 import { Background, ReactFlowProvider } from "@xyflow/react";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "./components/ui/resizable";
+import { Toaster } from "sonner";
 
 // Step can be either a "run" or a "uses" step, both with optional name
 const stepSchema = z
@@ -93,28 +99,35 @@ export default function App() {
 
   return (
     <main className="flex min-screen h-screen">
-      <Editor
-        height="100vh"
-        width="30%"
-        defaultLanguage="yaml"
-        value={code}
-        onChange={setCode}
-        theme="vs-dark"
-      />
+      <ResizablePanelGroup direction="horizontal">
+        <ResizablePanel maxSize={40} minSize={25} defaultSize={35}>
+          <Editor
+            defaultLanguage="yaml"
+            value={code}
+            onChange={setCode}
+            theme="vs-dark"
+          />
+        </ResizablePanel>
 
-      <section className="p-4 h-full w-full">
-        <ReactFlowProvider>
-          {workflow && <Graph workflow={workflow} />}
-          <Background />
-        </ReactFlowProvider>
+        <ResizableHandle withHandle />
 
-        {error && (
-          <div className="text-red-500">
-            <h2 className="text-lg font-bold">Error:</h2>
-            <p>{error}</p>
-          </div>
-        )}
-      </section>
+        <ResizablePanel maxSize={75} minSize={60} defaultSize={65}>
+          <section className="p-4 h-full w-full">
+            <ReactFlowProvider>
+              {workflow && <Graph workflow={workflow} />}
+              <Background />
+            </ReactFlowProvider>
+
+            {error && (
+              <div className="text-red-500">
+                <p>{error}</p>
+              </div>
+            )}
+          </section>
+        </ResizablePanel>
+      </ResizablePanelGroup>
+
+      <Toaster />
     </main>
   );
 }
