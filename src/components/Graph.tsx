@@ -1,7 +1,6 @@
 import {
   applyEdgeChanges,
   applyNodeChanges,
-  Background,
   Controls,
   Position,
   ReactFlow,
